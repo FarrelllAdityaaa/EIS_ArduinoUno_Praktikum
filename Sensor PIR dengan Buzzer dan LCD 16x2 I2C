@@ -1,0 +1,47 @@
+#include <LiquidCrystal_I2C.h>
+
+// Definisikan pin sensor PIR terhubung
+const int pirPin = 2; // Misalkan sensor PIR terhubung ke pin digital 2
+// Definisikan pin lampu terhubung
+const int lampPin = 13; // Misalkan lampu terhubung ke pin digital 13
+// Definisikan pin buzzer speaker terhubung
+const int buzzerPin = 10; // Misalkan buzzer speaker terhubung ke pin digital 3
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+
+void setup() {
+  Serial.begin(9600); // Inisialisasi komunikasi serial
+  pinMode(pirPin, INPUT); // Atur pin sensor sebagai input
+  pinMode(lampPin, OUTPUT); // Atur pin lampu sebagai output
+  pinMode(buzzerPin, OUTPUT); // Atur pin buzzer sebagai output
+
+  // Inisialisasi LCD I2C
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0,0);
+}
+
+void loop() {
+  // Baca nilai dari sensor PIR
+  int motionDetected = digitalRead(pirPin);
+
+  // Cek apakah gerakan terdeteksi
+  if (motionDetected == HIGH) {
+    lcd.setCursor(0,0);
+    lcd.print("Geterr Woyyy!!!");
+    Serial.println("Gerakan terdeteksi!");
+    digitalWrite(lampPin, HIGH); // Hidupkan lampu
+    tone(buzzerPin, 1500); // Nyalakan buzzer dengan frekuensi 1500 Hz
+    delay(1000); // Buzzer menyala selama 2 detik
+    noTone(buzzerPin); // Matikan buzzer
+    delay(500);
+  } else {
+    lcd.setCursor(0,0);
+    lcd.print("Gak Geter Sihh!!!");
+    Serial.println("Tidak ada gerakan.");
+    digitalWrite(lampPin, LOW); // Matikan lampu
+  }
+
+  delay(1000); // Tunda selama 1 detik sebelum membaca ulang sensor
+}
